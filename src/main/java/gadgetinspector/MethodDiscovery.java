@@ -71,11 +71,11 @@ public class MethodDiscovery {
         private String methodAnnotationDesc = "";
 
         public MethodAnnotationScanner() {
-            super(Opcodes.ASM6);
+            super(Opcodes.ASM9);
         }
 
         public MethodAnnotationScanner(ClassReference.Handle myClassHandle, String name, String desc, boolean isStatic) {
-            super(Opcodes.ASM6);
+            super(Opcodes.ASM9);
             this.myClassHandle = myClassHandle;
             this.name = name;
             this.desc = desc;
@@ -125,7 +125,7 @@ public class MethodDiscovery {
         private Set<String> annotations;
 
         private MethodDiscoveryClassVisitor() throws SQLException {
-            super(Opcodes.ASM6);
+            super(Opcodes.ASM9);
         }
 
         @Override
