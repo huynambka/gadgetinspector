@@ -1,5 +1,6 @@
+Below is translated by AI.
 
-修复了一些bug，优化并增加了一些功能，如slink点、利用链、识别函数注解、参数注解等等。并增加了web项目扫描策略，source点为路由入口，使用命令：
+Fixed some bugs, optimized and added some features, such as slink points, gadget chains, function annotation recognition, parameter annotation recognition, etc. Also added a web project scanning strategy, where the source point is the route entry. Use the following command:
 ```
 --config
 webservice
@@ -14,16 +15,16 @@ webservice
 /myGadgetinspector/webservice-skip-sources.demo
 /temp/halo.jar
 ```
-参数介绍：
+Parameter description:
 
---similarLevel n:解决路径爆炸，即中间路径重复率过高的问题，对每条链，会取它的前n条链和最后1条链作为去重因子，如有重复，则取最短链
+--similarLevel n: Solves path explosion, i.e., the problem of too high repetition rate in intermediate paths. For each chain, it takes its first n chains and the last 1 chain as deduplication factors. If there are duplicates, the shortest chain is taken.
 
---maxRepeatBranchesTimes n:表示某个分支函数最多可以出现在所有利用链中几次，默认20
+--maxRepeatBranchesTimes n: Indicates how many times a certain branch function can appear in all gadget chains at most. Default is 20.
 
-文件说明：
-webservice-skip-sources.demo为需要忽略的路由类
+File description:
+webservice-skip-sources.demo is the list of route classes to be ignored.
 
-如halo开源项目扫描结果如下(下面利用链有目录遍历漏洞，已报给厂商)：
+For example, the scan result of the open-source project halo is as follows (the following gadget chain has a directory traversal vulnerability, which has been reported to the vendor):
 ```
 Using classpath: [/temp/halo.jar]
 run/halo/app/controller/admin/api/BackupController.getMarkdownBackup(Ljava/lang/String;)Lrun/halo/app/model/dto/BackupDTO; (0)
@@ -70,31 +71,31 @@ com/sun/xml/internal/ws/handler/HandlerTube.closeServersideHandlers(Ljavax/xml/w
 
 ## threedr3am版本https://github.com/threedr3am/gadgetinspector
 ================
-##### 一、加入了Fastjson的gadget chain挖掘
+##### 1. Added Fastjson gadget chain discovery
 
-使用方式，main方法启动，启动参数：
+Usage: Start with the main method, startup parameters:
 ```
 --config fastjson /xxxxx/xxxxx/xxxxx/xxxxx.jar /xxxxx/xxxxx/xxxxx/xxxxx2.jar /xxxxx/xxxxx/xxxxx/xxxxx3.jar
 ```
 
-##### 二、加入SQLInject的检测
+##### 2. Added SQLInject detection
 
-slink暂时只加入了JdbcTemplate的检测，后续慢慢加入mybatis、原生jdbc、jpa、hibernate等。
+Currently, slink only includes detection for JdbcTemplate. Mybatis, native JDBC, JPA, Hibernate, etc. will be added gradually.
 
-使用方式，main方法启动，启动参数（新加入--boot参数，用于在spring-boot项目的jar包含有其它jar依赖的情况下）：
+Usage: Start with the main method, startup parameters (newly added --boot parameter, used when the Spring Boot project jar contains other jar dependencies):
 ```
 --config sqlinject --boot /xxxxx/xxxx/jdbc-1.0-SNAPSHOT.jar
 ```
 
-#### 三、不使用污点分析（挖掘更全面的链）
+#### 3. No Taint Analysis (Discover more comprehensive chains)
 
-最新加入--NoTaintTrack参数，指定不使用污点分析，将会把所有链都搜索出来，好处是不会遗漏，坏处是需要大量的人工审计
+Recently added --NoTaintTrack parameter, which specifies not to use taint analysis. All chains will be searched. The advantage is that nothing will be missed, the disadvantage is that a lot of manual auditing is required.
 
-使用方式，main方法启动，启动参数：
+Usage: Start with the main method, startup parameters:
 ```
 --config fastjson --boot --noTaintTrack /xxxxx/xxxxx/xxxxx/xxxxx.jar
 ```
-建议使用：
+Recommended usage:
 ```
 --config fastjson
 --noTaintTrack
@@ -105,27 +106,27 @@ slink暂时只加入了JdbcTemplate的检测，后续慢慢加入mybatis、原�
 --skipSourcesFile /Users/threedr3am/xxx/gadgetinspector/fastjson-skip-sources.demo
 /Users/threedr3am/.m2/repository/
 ```
-遍历/Users/threedr3am/.m2/repository/目录，把找到的jar包，30个一批的形式去不使用污点分析，挖掘JNDI slink的fastjson gadget
+Traverse the /Users/threedr3am/.m2/repository/ directory, and for each batch of 30 jars found, use no taint analysis to discover Fastjson gadgets with JNDI slink.
 
-#### 参数描述
-1. --config xxx：挖掘什么样的gadget chains（jackson、fastjson、sqlinject、jserial...）
-2. --boot：指定该jar为SpringBoot项目jar包
-3. --noTaintTrack：不使用污点分析，将会把所有链都搜索出来，好处是不会遗漏，坏处是需要大量的人工审计
-4. --mybatis.xml xxx：当挖掘sqlinject时，若工程使用了Mybatis，则可通过指定mapper xml所在目录，进行挖掘Mybatis的sql注入
-5. --resume：是否项目启动时不删除所有dat数据文件
-6. --opLevel 1：链聚合优化等级，1表示一层优化，默认0不优化
-7. --history recordFileName：启用历史扫描jar包记录，方便大规模扫描时不重复扫描旧jar包，好处时减少工作时间，坏处是遇到依赖组合的gadget可能扫不出来
-8. --max 100：最多扫描100个jar包
-10. --onlyJDK：仅扫描jdk依赖（rt.jar、jce.jar）
-11. --maxChainLength 5：只输出chain长度小于等于5的chain
-12. --crawMaven /Users/threedr3am/jar/：使用内置爬虫，自动爬取maven仓库，jar存储至/Users/threedr3am/jar/，maven仓库极慢，可以挂代理
-13. --onlyCrawMaven：只启动maven爬虫
-14. --onlyCrawMavenPopular：只启动maven-popular爬虫
-15. --onlyCrawNexus：只启动nexus爬虫
-16. --craw 10：启用爬虫功能，每10分钟分析一遍，出一次报告。若配置--crawMaven，则使用内置爬虫功能，爬取maven仓库
-17. --slink JNDI：指定挖掘的slinks，可选JNDI、SSRFAndXXE、EXEC、FileIO、Reflect、BCEL（hessian专用），默认不填挖掘除专用外的所有slinks
-18. --skipSourcesFile /xxx/xxxx/xxx.txt: 跳过哪些经常误报的class source，参考文件fastjson-skip-sources.demo
-19. --slinksFile /xxx/xxxx/xxx.txt: 自定义挖掘的slinks，使用后--slink参数忽略，参考文件fastjson-slinks.demo
+#### Parameter description
+1. --config xxx: What kind of gadget chains to discover (jackson, fastjson, sqlinject, jserial...)
+2. --boot: Specify that this jar is a Spring Boot project jar
+3. --noTaintTrack: Do not use taint analysis, all chains will be searched. The advantage is nothing will be missed, the disadvantage is a lot of manual auditing is required
+4. --mybatis.xml xxx: When discovering sqlinject, if the project uses Mybatis, you can specify the directory where the mapper xml is located to discover Mybatis SQL injection
+5. --resume: Whether to not delete all dat data files when the project starts
+6. --opLevel 1: Chain aggregation optimization level, 1 means one level of optimization, default is 0 (no optimization)
+7. --history recordFileName: Enable historical scan jar record, to avoid scanning old jars repeatedly during large-scale scanning. The advantage is reduced work time, the disadvantage is that gadgets composed of dependencies may not be found
+8. --max 100: Scan up to 100 jar files
+10. --onlyJDK: Only scan JDK dependencies (rt.jar, jce.jar)
+11. --maxChainLength 5: Only output chains with length less than or equal to 5
+12. --crawMaven /Users/threedr3am/jar/: Use the built-in crawler to automatically crawl the Maven repository, jars are stored in /Users/threedr3am/jar/. Maven repository is very slow, you can use a proxy
+13. --onlyCrawMaven: Only start the Maven crawler
+14. --onlyCrawMavenPopular: Only start the maven-popular crawler
+15. --onlyCrawNexus: Only start the Nexus crawler
+16. --craw 10: Enable crawler function, analyze every 10 minutes and generate a report. If --crawMaven is configured, use the built-in crawler to crawl the Maven repository
+17. --slink JNDI: Specify the slinks to discover, options are JNDI, SSRFAndXXE, EXEC, FileIO, Reflect, BCEL (for Hessian only). By default, all slinks except the special ones are discovered
+18. --skipSourcesFile /xxx/xxxx/xxx.txt: Skip class sources that are often false positives, refer to the file fastjson-skip-sources.demo
+19. --slinksFile /xxx/xxxx/xxx.txt: Customize the slinks to discover. When this is used, the --slink parameter is ignored. Refer to the file fastjson-slinks.demo
 
 ## JackOfMostTrades版本https://github.com/JackOfMostTrades/gadgetinspector
 ================
